@@ -8,13 +8,13 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import random
 
-# Benchmarking configurations
+# Configurações de benchmarking
 TAMANHOS_N = [1000, 5000, 10000, 25000, 50000, 100000]
 REPETICOES = 3
 
 
 def compile_cpp(source_path, bin_path):
-    """Compiles the C++ source code"""
+    """Compila o código fonte C++"""
     result = subprocess.run(
         ["g++", "-O3", str(source_path), "-o", str(bin_path)],
         capture_output=True,
@@ -25,19 +25,19 @@ def compile_cpp(source_path, bin_path):
 
 
 def run_benchmark(bin_path, n, algorithm_type):
-    """Generates input, executes binary and measures CPU Time"""
-    # Input generation based on algorithm type
+    """Gera entrada, executa o binário e mede o tempo de CPU"""
+    # Geração de entrada baseada no tipo de algoritmo
     if "Busca" in algorithm_type or "Search" in algorithm_type:
         data = sorted([random.randint(0, n * 10) for _ in range(n)])
         target = random.choice(data)
         input_str = f"{n}\n" + " ".join(map(str, data)) + f"\n{target}"
-    else:  # Sorting
+    else:  # Ordenação
         data = [random.randint(0, n * 10) for _ in range(n)]
         input_str = f"{n}\n" + " ".join(map(str, data))
 
     usage_start = resource.getrusage(resource.RUSAGE_CHILDREN)
 
-    # Execution sending data via stdin
+    # Execução enviando dados via stdin
     process = subprocess.Popen(
         [str(bin_path)], stdin=subprocess.PIPE, stdout=subprocess.PIPE, text=True
     )
@@ -45,7 +45,7 @@ def run_benchmark(bin_path, n, algorithm_type):
 
     usage_end = resource.getrusage(resource.RUSAGE_CHILDREN)
 
-    # CPU Time calculation (User + System)
+    # Cálculo do tempo de CPU (Usuário + Sistema)
     cpu_time = (usage_end.ru_utime - usage_start.ru_utime) + (
         usage_end.ru_stime - usage_start.ru_stime
     )
@@ -55,7 +55,7 @@ def run_benchmark(bin_path, n, algorithm_type):
 
 st.title("Análise Empírica de Complexidade")
 
-# Algorithm type selection (UI in Portuguese)
+# Seleção do tipo de algoritmo (Interface em Português)
 option = st.selectbox("Tipo de algoritmo", ("Busca", "Ordenação"))
 uploaded_files = st.file_uploader(
     "Upload dos fontes (.cpp)", accept_multiple_files=True, type=["cpp"]
@@ -71,7 +71,7 @@ if st.button("Iniciar Análise") and uploaded_files:
             with st.status(
                 f"Processando {uploaded_file.name}...", expanded=True
             ) as status:
-                # 1. Save and Compile
+                # 1. Salvar e Compilar
                 source_path = temp_path / uploaded_file.name
                 bin_path = temp_path / f"{uploaded_file.name}.out"
                 source_path.write_bytes(uploaded_file.getvalue())
@@ -83,7 +83,7 @@ if st.button("Iniciar Análise") and uploaded_files:
                     st.error(e)
                     continue
 
-                # 2. Run Benchmarks
+                # 2. Executar Benchmarks
                 for n in TAMANHOS_N:
                     iteration_times = []
                     for r in range(REPETICOES):
@@ -104,7 +104,7 @@ if st.button("Iniciar Análise") and uploaded_files:
                     label=f"Concluído: {uploaded_file.name}", state="complete"
                 )
 
-    # 3. Visualization
+    # 3. Visualização
     if results:
         df = pd.DataFrame(results)
         st.subheader("Resultados da Análise")
