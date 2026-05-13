@@ -71,3 +71,6 @@ Como mencionado anteriormente, a análise empírica possui desafios que podem im
 
 = Conclusão
 Os resultados auxiliam na compreensão de como a teoria se aplica na prática. Fica claro que para grandes volumes de dados, algoritmos com melhor complexidade (como o Merge Sort) são fundamentais para manter a eficiência do sistema.
+
+#v(1em)
+*Código-fonte:* Todo o código desenvolvido para este trabalho está disponível publicamente em: #link("https://github.com/vadolasi/trabalho1-edb1")
